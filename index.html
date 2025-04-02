@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque de Chopps</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px;
+            border: 1px solid #070303;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            background: linear-gradient(135deg, #6e7dff, #4CAF50);
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #163b17, #161f6e);
+        }
+
+        /* Diminuindo a largura da tabela */
+        table {
+            width: 90%; /* Diminui a largura da tabela */
+            max-width: 600px; /* Define um tamanho máximo para a tabela */
+            margin: 0 auto; /* Centraliza a tabela */
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        td button {
+            background-color: red;
+        }
+        td button:hover {
+            background-color: darkred;
+        }
+        /* Diminuindo o gráfico */
+        canvas {
+            width: 80% !important;  /* Diminui o gráfico */
+            height: 250px !important; /* Define uma altura para o gráfico */
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Estilo dos botões de quantidade */
+        #quantidade-botoes {
+            display: flex;
+            flex-wrap: wrap; /* Para quebrar os botões para a linha seguinte se necessário */
+            justify-content: center; /* Alinha os botões à esquerda */
+            gap: 10px; /* Espaçamento entre os botões */
+        }
+
+        .toggle-btn {
+            width: auto;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: block;
+            margin: 10px auto;
+        }
+
+        .toggle-btn:hover {
+            background-color: #0056b3;
+        }
+
+
+        #quantidade-botoes button {
+            padding: 12px 18px;
+            font-size: 18px;
+            background-color: #4CAF50; /* Cor diferente quando selecionado */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s ease-in-out;
+            width: 40px; /* Define uma largura fixa para os botões */
+            text-align: center;
+        }
+
+        #quantidade-botoes button:hover {
+            background-color: #45a049;
+}
+
+        #quantidade-botoes button.selected {
+            background-color: #ff9800 !important; /* Cor destacada */
+            color: white;
+            font-weight: bold;
+            border: 2px solid #000000;
+            transform: scale(1.1); /* Efeito leve de aumento */
+
+        }
+
+        #data {
+            width: 150px; /* Define a largura desejada */
+            padding: 8px; /* Ajusta o espaço interno */
+            text-align: center; /* Centraliza o texto dentro do input */
+            font-size: 14px; /* Tamanho da fonte */
+        }
+
+        #resumo {
+            text-align: center; /* Centraliza o texto */
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            width: 80%;
+            max-width: 600px;
+            margin-left: auto; /* Centraliza o elemento horizontalmente */
+            margin-right: auto; /* Centraliza o elemento horizontalmente */
+}
+
+h3 {
+    text-align: center; /* Centraliza o título */
+}
+
+        button i {
+            margin-right: 8px;  /* Espaçamento entre o ícone e o texto */
+    }
+
+/* Estilo do modal */
+.modal {
+    display: none; /* Oculto por padrão */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro com transparência */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <h2>Adicionar Chopp</h2>
+        <button onclick="alternarFormulario()" id="toggleButton" class="toggle-btn">
+            <i class="fas fa-plus"></i> Adicionar Chopp
+        </button>  
+        <div id="formularioChopp" style="display: none; margin-top: 10px;">
+            <fieldset>
+            <legend>Informações do Chopp</legend>
+            <label for="cervejaria">Cervejaria:</label>
+            <select id="cervejaria" onchange="atualizarChopps()">
+                    <option value="">Selecione</option>
+            </select>
+            
+            <label for="nome">Nome do Chopp:</label>
+            <select id="nome">
+                <option value="">Selecione uma cervejaria primeiro</option>
+            </select>
+
+            <label for="tipo">Estilo de Chopp:</label>
+            <select id="tipo">
+            <option value="Pilsen">Pilsen</option>
+            <option value="Lager">Lager</option>
+            <option value="IPA">IPA</option>
+            <option value="American IPA">American IPA</option>
+            <option value="Double IPA">Double IPA</option>
+            <option value="APA">APA</option>
+            <option value="Stout">Stout</option>
+            <option value="Weiss">Weiss</option>
+            <option value="Sour">Sour</option>
+            </select>
+
+            
+            <label for="quantidade">Quantidade:</label>
+            <div id="quantidade-botoes">
+                <button type="button" onclick="selecionarQuantidade(1)">1</button>
+                <button type="button" onclick="selecionarQuantidade(2)">2</button>
+                <button type="button" onclick="selecionarQuantidade(3)">3</button>
+                <button type="button" onclick="selecionarQuantidade(4)">4</button>
+                <button type="button" onclick="selecionarQuantidade(5)">5</button>
+                <button type="button" onclick="selecionarQuantidade(6)">6</button>
+                <button type="button" onclick="selecionarQuantidade(7)">7</button>
+                <button type="button" onclick="selecionarQuantidade(8)">8</button>
+                <button type="button" onclick="selecionarQuantidade(9)">9</button>
+                <button type="button" onclick="selecionarQuantidade(10)">10</button>
+            </div>
+            
+            <input type="number" id="quantidade" style="display: none;">  
+            <label for="data">Data de Chegada:</label>
+            <input type="date" id="data">  
+            <button onclick="adicionarChopp()">Adicionar</button>
+            </fieldset>
+        </div>
+
+        <h2>Estoque</h2>
+
+        <input type="text" id="filtro" placeholder="Filtrar por nome ou tipo">
+        <table>
+            <thead>
+                <tr>
+                    <th onclick="ordenarTabela('nome')">Nome</th>
+                    <th onclick="ordenarTabela('quantidade')">Quantidade</th>
+                    <th onclick="ordenarTabela('data')">Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="estoque"></tbody>
+        </table>
+        <h3><i class="fas fa-warehouse"></i> Resumo do Estoque</h3>
+                <div id="resumo"></div>
+        <button onclick="exportarDados()">Exportar Dados</button>
+        
+        <div id="formularioEditarChopp" style="display: none; margin-top: 10px;">
+            <h2>Editar Chopp</h2>
+            <fieldset>
+                <legend>Informações do Chopp</legend>
+                
+                <label for="editTipo">Estilo de Chopp:</label>
+                <select id="editTipo">
+                    <option value="Pilsen">Pilsen</option>
+                    <option value="Lager">Lager</option>
+                    <option value="IPA">IPA</option>
+                    <option value="American IPA">American IPA</option>
+                    <option value="Double IPA">Double IPA</option>
+                    <option value="APA">APA</option>
+                    <option value="Stout">Stout</option>
+                    <option value="Weiss">Weiss</option>
+                    <option value="Sour">Sour</option>
+                </select>
+                <label for="editQuantidade">Quantidade:</label>
+                <div id="editQuantidade-botoes">
+                </div>
+                <input type="number" id="editQuantidade" style="display: none;">
+                <label for="editData">Data de Chegada:</label>
+                <input type="date" id="editData">
+                <button onclick="salvarEdicaoChopp()">Salvar</button>
+                <button onclick="cancelarEdicaoChopp()">Cancelar</button>
+            </fieldset>
+        </div>
+    </div>  
+
+    <!-- Modal para edição de chopp -->
+    <div id="modalEditarChopp" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2>Editar Chopp</h2>
+            <fieldset>
+                <legend>Informações do Chopp</legend>
+                <label for="editTipo">Estilo de Chopp:</label>
+                <select id="editTipo">
+                    <option value="Pilsen">Pilsen</option>
+                    <option value="Lager">Lager</option>
+                    <option value="IPA">IPA</option>
+                    <option value="American IPA">American IPA</option>
+                    <option value="Double IPA">Double IPA</option>
+                    <option value="APA">APA</option>
+                    <option value="Stout">Stout</option>
+                    <option value="Weiss">Weiss</option>
+                    <option value="Sour">Sour</option>
+                </select>
+                <label for="editQuantidade">Quantidade:</label>
+                <div id="editQuantidade-botoes"></div>
+                <input type="number" id="editQuantidade" style="display: none;">
+                <label for="editData">Data de Chegada:</label>
+                <input type="date" id="editData">
+                <button onclick="salvarEdicaoChopp()">Salvar</button>
+                <button onclick="fecharModal()">Cancelar</button>
+            </fieldset>
+        </div>
+    </div>
+
+    <script>
+        let estoque = JSON.parse(localStorage.getItem("estoque")) || [];
+        const chopps = {
+            "Palácio": ["Dry Stout", "Honey", "Red Ale"],
+            "Legião": ["Hazy Ale", "IPA", "Weiss"],
+            "Schornstein": ["Imperial IPA", "IPA", "APA", "Weiss"],
+            "Seasons": ["Moo England"],
+            "Barbarella": ["Framboesa"],
+            "Way Beer": ["Witbier", "Red Ale", "Amburana Lager", "Avelã Porter", "German", "Blond Ale Goiaba"],
+            "Leuven": ["Pilsen", "Golden Ale King", "Red Ale"],
+            "Unicorn": ["Catharina Sour", "NEIPA", "Hop Lager"],
+            "Krug": ["Ignorância", "Hefe Weizen"],
+            "UnderTap": ["Largados e Lúpulados", "#100", "Código Pirata", "Mergulho sem Fim 6"],
+            "Dogma": ["Blanche de Mooca Witbier"]
+        };
+
+        function limparCampos() {
+            document.getElementById("cervejaria").value = "";
+            document.getElementById("nome").innerHTML = "<option value=''>Selecione uma cervejaria primeiro</option>";
+            document.getElementById("quantidade").value = "";
+            document.getElementById("data").value = "";
+        }
+
+    // Função para selecionar a quantidade
+        function selecionarQuantidade(valor) {
+            document.getElementById("quantidade").value = valor;
+
+    // Remove a classe "selected" de todos os botões
+            document.querySelectorAll("#quantidade-botoes button").forEach(button => {
+            button.addEventListener("click", function() {
+
+    // Remove a classe "selected" de todos os botões
+            document.querySelectorAll("#quantidade-botoes button").forEach(btn => {
+            btn.classList.remove("selected");
+        });
+    // Adiciona a classe "selected" ao botão clicado
+    
+        this.classList.add("selected");
+    });
+});
+    // Seleciona o botão correto e adiciona a classe "selected"
+    const botaoSelecionado = document.querySelector(`#quantidade-botoes button:nth-child(${valor})`);
+    if (botaoSelecionado) {
+        botaoSelecionado.classList.add("selected");
+    }
+}
+        flatpickr("#data", {
+            dateFormat: "d/m/Y", // Formato: Dia/Mês/Ano
+            maxDate: "today", // Impede datas futuras
+            locale: "pt" // Define o calendário em português
+        });
+
+        flatpickr("#editData", {
+            dateFormat: "d/m/Y", // Formato: Dia/Mês/Ano
+            maxDate: "today", // Impede datas futuras
+            locale: "pt" // Define o calendário em português
+        });
+
+        function exibirResumo() {
+    let resumo = '';
+    const tipos = [...new Set(estoque.map(item => item.tipo))]; // Tipos distintos de chopp
+
+    tipos.forEach(tipo => {
+        const totalQuantidade = estoque
+            .filter(item => item.tipo === tipo)
+            .reduce((acc, item) => acc + item.quantidade, 0);
+        resumo += `<p><strong>${tipo}:</strong> ${totalQuantidade} unidades</p>`;
+    });
+
+    document.getElementById("resumo").innerHTML = resumo;
+}
+
+        function atualizarTabelaHistorico() {
+            let tbody = document.querySelector("#tabela-historico tbody");
+            tbody.innerHTML = ""; // Limpa a tabela antes de atualizar
+
+            historicoMovimentacao.forEach(mov => {
+                let row = `<tr>
+                <td>${mov.data}</td>
+                <td>${mov.tipo}</td>
+                <td>${mov.nome}</td>
+                <td>${mov.quantidade}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+}
+
+        function preencherCervejarias() {
+            const cervejariaSelect = document.getElementById("cervejaria");
+            Object.keys(chopps).forEach(cervejaria => {
+            let option = document.createElement("option");
+            option.value = cervejaria;
+            option.textContent = cervejaria;
+            cervejariaSelect.appendChild(option);
+            });
+        }
+        
+
+        function atualizarChopps() {
+            const cervejaria = document.getElementById("cervejaria").value;
+            const nomeSelect = document.getElementById("nome");
+            nomeSelect.innerHTML = "<option value=''>Selecione</option>";
+            if (cervejaria && chopps[cervejaria]) {
+                chopps[cervejaria].forEach(chopp => {
+                let option = document.createElement("option");
+                option.value = `${cervejaria} - ${chopp}`;
+                option.textContent = chopp;
+                nomeSelect.appendChild(option);
+                });
+            }
+        }
+
+        function adicionarChopp() {
+            const cervejaria = document.getElementById("cervejaria").value;
+            const nome = document.getElementById("nome").value;
+            const quantidade = parseInt(document.getElementById("quantidade").value);
+            const data = document.getElementById("data").value;
+            const tipo = document.getElementById("tipo").value; // Novo campo
+
+            if (!cervejaria || !nome || !quantidade || !data) {
+                alert("Por favor, preencha todos os campos!");
+                return;
+            }
+
+        function limparFormulario() {
+            document.getElementById("cervejaria").value = "";
+            document.getElementById("nome").value = "";
+            document.getElementById("quantidade").value = "";
+            document.getElementById("data").value = "";
+            // Limpe outros campos do formulário, se houver
+        }
+
+        function focoNoPrimeiroCampo() {
+            document.getElementById("cervejaria").focus();
+}
+
+            // Verificar se o chopp já existe no estoque
+            const itemExistente = estoque.find(item => item.nome === nome);
+            
+            if (itemExistente) {
+            // Se o item já existir, incrementa a quantidade
+                itemExistente.quantidade += quantidade;
+            } else {
+                // Caso contrário, adiciona um novo item ao estoque
+                estoque.push({ nome, quantidade, data, tipo }); // Adiciona o tipo
+            }
+
+            // Salvar o estoque no localStorage
+                localStorage.setItem("estoque", JSON.stringify(estoque));
+
+            // Atualizar a tabela e o resumo
+                atualizarTabela();
+
+            // Limpar os campos após adicionar
+                limparCampos();
+        }
+
+        function atualizarTabela() {
+        const tabela = document.getElementById("estoque");
+        tabela.innerHTML = "";
+        
+        estoque.forEach((item, index) => {
+            const row = `<tr>
+            <td>${item.nome}</td>
+            <td>${item.quantidade}</td>
+            <td>${item.data}</td>
+            <td>
+                <button onclick="removerChopp(${index})" style="background-color: red;">
+                <i class="fas fa-trash"></i> Remover
+                </button>
+                <button onclick="retirarChopp('${item.nome}')" style="background-color: orange;">
+                <i class="fas fa-minus"></i> Retirar
+                </button>
+                <button onclick="editarChopp(${index})" style="background-color: #007bff;">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+            </td>
+            </tr>`;
+            tabela.innerHTML += row;
+        });
+
+        // Chama a função para atualizar o resumo do estoque
+        exibirResumo();
+    }
+
+        function removerChopp(index) {
+            if (confirm("Tem certeza que deseja remover este item?")) {
+                estoque.splice(index, 1);
+                localStorage.setItem("estoque", JSON.stringify(estoque));
+                atualizarTabela();
+            }
+        }
+
+        function retirarChopp(nome) {
+        let quantidadeRetirada = prompt("Quantos barris deseja retirar ?");
+        quantidadeRetirada = parseInt(quantidadeRetirada);
+
+        if (!quantidadeRetirada || quantidadeRetirada <= 0) {
+            alert("Quantidade inválida!");
+            return;
+        }
+
+        // Encontrar o item no estoque
+        const item = estoque.find(item => item.nome === nome);
+        
+        if (item) {
+            if (item.quantidade >= quantidadeRetirada) {
+                item.quantidade -= quantidadeRetirada;
+            } else {
+                alert("Estoque insuficiente!");
+            }
+        }
+
+        // Atualizar localStorage e a tabela
+        localStorage.setItem("estoque", JSON.stringify(estoque));
+        atualizarTabela();
+    }
+
+        preencherCervejarias();
+        atualizarTabela();
+        exibirResumo();
+
+        function alternarFormulario() {
+    let formulario = document.getElementById("formularioChopp");
+    let botao = document.getElementById("toggleButton");
+
+    if (formulario.style.display === "none") {
+        
+        formulario.style.display = "block";
+        botao.textContent = "- Fechar";
+    } else {
+        formulario.style.display = "none";
+        botao.textContent = "+ Adicionar Chopp";
+        focoNoPrimeiroCampo();
+    }
+}
+function filtrarTabela() {
+        // Lógica para filtrar a tabela
+        const filtro = document.getElementById("filtro").value.toLowerCase();
+        const tabela = document.getElementById("estoque");
+        const linhas = tabela.getElementsByTagName("tr");
+
+        for (let i = 0; i < linhas.length; i++) {
+            const celulas = linhas[i].getElementsByTagName("td");
+            let encontrado = false;
+            for (let j = 0; j < celulas.length; j++) {
+                if (celulas[j].innerHTML.toLowerCase().indexOf(filtro) > -1) {
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (encontrado) {
+                linhas[i].style.display = "";
+            } else {
+                linhas[i].style.display = "none";
+            }
+        }
+    }
+
+    document.getElementById("filtro").addEventListener("keyup", filtrarTabela);
+
+    function ordenarTabela(coluna) {
+        // Lógica para ordenar a tabela
+        let tabela, linhas, trocando, i, x, y, deveTrocar;
+        tabela = document.getElementById("estoque");
+        trocando = true;
+
+        while (trocando) {
+            trocando = false;
+            linhas = tabela.rows;
+            for (i = 1; i < (linhas.length - 1); i++) {
+                deveTrocar = false;
+                x = linhas[i].getElementsByTagName("TD")[coluna];
+                y = linhas[i + 1].getElementsByTagName("TD")[coluna];
+
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    deveTrocar = true;
+                    break;
+                }
+            }
+            if (deveTrocar) {
+                linhas[i].parentNode.insertBefore(linhas[i + 1], linhas[i]);
+                trocando = true;
+            }
+        }
+    }
+
+    function atualizarGrafico() {
+        // Lógica para atualizar o gráfico
+        const tipos = estoque.map(item => item.tipo);
+        const quantidades = estoque.map(item => item.quantidade);
+
+        const ctx = document.getElementById('graficoEstoque').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: tipos,
+                datasets: [{
+                    label: 'Quantidade por Tipo',
+                    data: quantidades,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function exportarDados() {
+        // Lógica para exportar os dados
+        let csv = 'Nome,Quantidade,Data,Tipo\n';
+        estoque.forEach(item => {
+            csv += `${item.nome},${item.quantidade},${item.data},${item.tipo}\n`;
+        });
+
+        const link = document.createElement('a');
+        link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
+        link.setAttribute('download', 'estoque_chopps.csv');
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    
+    let choppEmEdicao = null; // Variável para armazenar o chopp em edição
+
+
+function editarChopp(index) {
+    choppEmEdicao = estoque[index];
+
+    // Preenche o modal com os dados do chopp selecionado
+    document.getElementById("editTipo").value = choppEmEdicao.tipo;
+    document.getElementById("editQuantidade").value = choppEmEdicao.quantidade;
+    document.getElementById("editData").value = choppEmEdicao.data;
+
+    // Atualiza os botões de quantidade
+    atualizarBotoesQuantidadeEdicao(choppEmEdicao.quantidade);
+
+    // Exibe o modal
+    document.getElementById("modalEditarChopp").style.display = "block";
+}
+
+function fecharModal() {
+    // Esconde o modal
+    document.getElementById("modalEditarChopp").style.display = "none";
+    choppEmEdicao = null; // Limpa o chopp em edição
+}
+
+function atualizarBotoesQuantidadeEdicao(quantidadeSelecionada) {
+    const quantidadeBotoesDiv = document.getElementById("editQuantidade-botoes");
+    quantidadeBotoesDiv.innerHTML = ''; // Limpa os botões existentes
+
+    for (let i = 1; i <= 10; i++) {
+        const botao = document.createElement("button");
+        botao.textContent = i;
+        botao.type = "button";
+        botao.onclick = function() {
+            selecionarQuantidadeEdicao(i);
+        };
+        if (i === quantidadeSelecionada) {
+            botao.classList.add("selected");
+        }
+        quantidadeBotoesDiv.appendChild(botao);
+    }
+}
+
+function selecionarQuantidadeEdicao(valor) {
+    document.getElementById("editQuantidade").value = valor;
+
+    // Remove a classe "selected" de todos os botões
+    document.querySelectorAll("#editQuantidade-botoes button").forEach(btn => {
+        btn.classList.remove("selected");
+    });
+
+    // Adiciona a classe "selected" ao botão clicado
+    const botaoSelecionado = document.querySelector(`#editQuantidade-botoes button:nth-child(${valor})`);
+    if (botaoSelecionado) {
+        botaoSelecionado.classList.add("selected");
+    }
+}
+
+function salvarEdicaoChopp() {
+    if (!choppEmEdicao) return;
+
+    const novaQuantidade = parseInt(document.getElementById("editQuantidade").value);
+    const novaData = document.getElementById("editData").value;
+    const novoTipo = document.getElementById("editTipo").value;
+
+    if (isNaN(novaQuantidade) || novaQuantidade <= 0 || !novaData) {
+        alert("Por favor, preencha todos os campos corretamente.");
+        return;
+    }
+
+    // Atualiza os dados do chopp no estoque
+    const index = estoque.findIndex(item => item === choppEmEdicao);
+    if (index !== -1) {
+        estoque[index].quantidade = novaQuantidade;
+        estoque[index].data = novaData;
+        estoque[index].tipo = novoTipo;
+    }
+
+    console.log("Estoque atualizado após edição:", estoque);
+
+    // Salva as alterações no localStorage
+    localStorage.setItem("estoque", JSON.stringify(estoque));
+
+    // Atualiza a tabela de exibição
+    atualizarTabela();
+
+    // Atualiza o resumo do estoque
+    exibirResumo();
+
+    // Esconde o modal
+    fecharModal();
+
+    alert("Chopp editado com sucesso!");
+}
+
+
+
+function atualizarChoppsEdicao() {
+    const cervejaria = document.getElementById("editCervejaria").value;
+    const nomeSelect = document.getElementById("editNome");
+    nomeSelect.innerHTML = "<option value=''>Selecione</option>";
+    if (cervejaria && chopps[cervejaria]) {
+        chopps[cervejaria].forEach(chopp => {
+        let option = document.createElement("option");
+        option.value = `${cervejaria} - ${chopp}`;
+        option.textContent = chopp;
+        nomeSelect.appendChild(option);
+        });
+    }
+}
+
+
+    </script>
+</body>
+</html>
