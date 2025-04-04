@@ -59,14 +59,88 @@
             background: linear-gradient(135deg, #163b17, #161f6e);
         }
 
-        /* Diminuindo a largura da tabela */
+        /* Estilo geral da tabela */
         table {
-            width: 90%; /* Diminui a largura da tabela */
-            max-width: 600px; /* Define um tamanho máximo para a tabela */
-            margin: 0 auto; /* Centraliza a tabela */
-            border-collapse: collapse;
-            margin-top: 20px;
+            width: 100%; /* Ocupa toda a largura disponível */
+            border-collapse: collapse; /* Remove os espaços entre as bordas */
+            margin: 20px 0; /* Espaçamento acima e abaixo da tabela */
+            font-size: 16px; /* Tamanho da fonte */
+            text-align: left; /* Alinha o texto à esquerda */
+            border-radius: 8px; /* Bordas arredondadas */
+            overflow: hidden; /* Garante que as bordas arredondadas sejam aplicadas */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra suave */
         }
+        
+        /* Estilo para o cabeçalho da tabela */
+        table thead {
+            background-color: #4CAF50; /* Fundo verde */
+            color: white; /* Texto branco */
+        }
+        
+        table thead th {
+            padding: 12px; /* Espaçamento interno */
+            font-weight: bold; /* Texto em negrito */
+            text-transform: uppercase; /* Texto em letras maiúsculas */
+            border-bottom: 2px solid #ddd; /* Linha inferior */
+        }
+        
+        /* Estilo para as células da tabela */
+        table tbody td {
+            padding: 12px; /* Espaçamento interno */
+            border-bottom: 1px solid #ddd; /* Linha inferior */
+            background-color: #f9f9f9; /* Fundo claro */
+            color: #333; /* Texto escuro */
+        }
+        
+        /* Efeito de hover nas linhas */
+        table tbody tr:hover {
+            background-color: #f1f1f1; /* Fundo mais claro ao passar o mouse */
+            transform: scale(1.01); /* Leve aumento */
+            transition: all 0.2s ease-in-out; /* Transição suave */
+        }
+        
+        /* Estilo para os botões dentro da tabela */
+        table tbody td button {
+            padding: 8px 12px; /* Espaçamento interno */
+            font-size: 14px; /* Tamanho da fonte */
+            border: none; /* Remove as bordas */
+            border-radius: 5px; /* Bordas arredondadas */
+            cursor: pointer; /* Mostra o cursor de clique */
+            transition: background-color 0.3s ease, transform 0.2s ease-in-out; /* Transições suaves */
+        }
+        
+        table tbody td button:hover {
+            transform: scale(1.1); /* Leve aumento ao passar o mouse */
+        }
+        
+        /* Botões de ação com cores específicas */
+        table tbody td button.remover {
+            background-color: #e74c3c; /* Vermelho */
+            color: white;
+        }
+        
+        table tbody td button.remover:hover {
+            background-color: #c0392b; /* Vermelho mais escuro */
+        }
+        
+        table tbody td button.retirar {
+            background-color: #f39c12; /* Laranja */
+            color: white;
+        }
+        
+        table tbody td button.retirar:hover {
+            background-color: #e67e22; /* Laranja mais escuro */
+        }
+        
+        table tbody td button.editar {
+            background-color: #3498db; /* Azul */
+            color: white;
+        }
+        
+        table tbody td button.editar:hover {
+            background-color: #2980b9; /* Azul mais escuro */
+        }
+        
         th, td {
             border: 1px solid #ddd;
             padding: 10px;
@@ -211,14 +285,140 @@ h3 {
     cursor: pointer;
 }
 
+#modalQuantidade-botoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#modalQuantidade-botoes button {
+    padding: 12px 18px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease-in-out;
+    width: 40px;
+    text-align: center;
+}
+
+#modalQuantidade-botoes button:hover {
+    background-color: #45a049;
+}
+
+#modalQuantidade-botoes button.selected {
+    background-color: #ff9800 !important;
+    color: white;
+    font-weight: bold;
+    border: 2px solid #000000;
+    transform: scale(1.1);
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.dark-mode .container {
+    background-color: #1e1e1e;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode table {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.dark-mode th {
+    background-color: #000000;
+}
+
+.dark-mode td {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.dark-mode button {
+    background-color: #292828;
+    color: #ffffff;
+}
+
+.dark-mode button:hover {
+    background-color: #555555;
+}
+
+.dark-mode h2, .dark-mode h3 {
+    color: #ffffff; /* Define o texto como branco no modo escuro */
+}
+
+.dark-mode .modal-content {
+    background-color: #1e1e1e; /* Fundo escuro para o modal */
+    color: #ffffff; /* Texto branco para contraste */
+}
+
+.dark-mode .modal-content label {
+    color: #ffffff; /* Garante que os rótulos sejam visíveis */
+}
+
+.dark-mode .modal-content select,
+.dark-mode .modal-content input {
+    background-color: #333333; /* Fundo escuro para inputs e selects */
+    color: #ffffff; /* Texto branco */
+    border: 1px solid #555555; /* Borda cinza para inputs */
+}
+
+.dark-mode-btn {
+    position: fixed; /* Fixa o botão no canto da tela */
+    top: 10px; /* Distância do topo */
+    right: 10px; /* Distância da direita */
+    background-color: #333333; /* Fundo escuro */
+    color: #ffffff; /* Cor do ícone */
+    border: none; /* Remove a borda */
+    border-radius: 50%; /* Torna o botão circular */
+    width: 40px; /* Largura do botão */
+    height: 40px; /* Altura do botão */
+    display: flex; /* Centraliza o ícone */
+    align-items: center; /* Centraliza o ícone verticalmente */
+    justify-content: center; /* Centraliza o ícone horizontalmente */
+    cursor: pointer; /* Mostra o cursor de clique */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Adiciona uma sombra */
+    transition: background-color 0.3s, transform 0.2s ease-in-out; /* Animações */
+}
+
+.dark-mode-btn:hover {
+    background-color: #555555; /* Fundo mais claro ao passar o mouse */
+    transform: scale(1.1); /* Aumenta levemente o botão */
+}
+
+.dark-mode-btn i {
+    font-size: 18px; /* Tamanho do ícone */
+}
+
+table tbody tr {
+    opacity: 0; /* Inicialmente invisível */
+    transform: translateY(10px); /* Levemente deslocado para baixo */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Transição suave */
+}
+
+table tbody tr.show {
+    opacity: 1; /* Torna visível */
+    transform: translateY(0); /* Posição normal */
+}
 </style>
 </head>
 <body>
     <div class="container">
         <h2>Adicionar Chopp</h2>
-        <button onclick="alternarFormulario()" id="toggleButton" class="toggle-btn">
+        <button onclick="abrirModalAdicionar()" id="toggleButton" class="toggle-btn">
             <i class="fas fa-plus"></i> Adicionar Chopp
         </button>  
+        <button id="toggleDarkMode" class="dark-mode-btn">
+            <i class="fas fa-moon"></i>
+        </button>
         <div id="formularioChopp" style="display: none; margin-top: 10px;">
             <fieldset>
             <legend>Informações do Chopp</legend>
@@ -273,16 +473,16 @@ h3 {
         <table>
             <thead>
                 <tr>
-                    <th onclick="ordenarTabela('nome')">Nome</th>
-                    <th onclick="ordenarTabela('quantidade')">Quantidade</th>
-                    <th onclick="ordenarTabela('data')">Data</th>
+                    <th onclick="ordenarTabela('nome')">Nome <i class="fas fa-sort"></i></th>
+                    <th onclick="ordenarTabela('quantidade')">Quantidade <i class="fas fa-sort"></i></th>
+                    <th onclick="ordenarTabela('data')">Data <i class="fas fa-sort"></i></th>
                     <th>Ações</th>
                 </tr>
             </thead>
             <tbody id="estoque"></tbody>
         </table>
         <h3><i class="fas fa-warehouse"></i> Resumo do Estoque</h3>
-                <div id="resumo"></div>
+<div id="resumo"></div>
         <button onclick="exportarDados()">Exportar Dados</button>
         
         <div id="formularioEditarChopp" style="display: none; margin-top: 10px;">
@@ -344,6 +544,50 @@ h3 {
         </div>
     </div>
 
+    <!-- Modal para adicionar chopp -->
+<div id="modalAdicionarChopp" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModalAdicionar()">&times;</span>
+        <h2>Adicionar Chopp</h2>
+        <fieldset>
+            <legend>Informações do Chopp</legend>
+            <label for="modalCervejaria">Cervejaria:</label>
+            <select id="modalCervejaria" onchange="atualizarChoppsModal()">
+                <option value="">Selecione</option>
+            </select>
+            
+            <label for="modalNome">Nome do Chopp:</label>
+            <select id="modalNome">
+                <option value="">Selecione uma cervejaria primeiro</option>
+            </select>
+
+            <label for="modalTipo">Estilo de Chopp:</label>
+            <select id="modalTipo">
+                <option value="Pilsen">Pilsen</option>
+                <option value="Lager">Lager</option>
+                <option value="IPA">IPA</option>
+                <option value="American IPA">American IPA</option>
+                <option value="Double IPA">Double IPA</option>
+                <option value="APA">APA</option>
+                <option value="Stout">Stout</option>
+                <option value="Weiss">Weiss</option>
+                <option value="Sour">Sour</option>
+            </select>
+
+            <label for="modalQuantidade">Quantidade:</label>
+            <div id="modalQuantidade-botoes">
+                <!-- Os botões serão gerados dinamicamente -->
+            </div>
+            <input type="number" id="modalQuantidade" style="display: none;">
+            
+            <label for="modalData">Data de Chegada:</label>
+            <input type="text" id="modalData">
+            
+            <button onclick="adicionarChoppModal()">Adicionar</button>
+        </fieldset>
+    </div>
+</div>
+
     <script>
         let estoque = JSON.parse(localStorage.getItem("estoque")) || [];
         const chopps = {
@@ -402,6 +646,12 @@ h3 {
             locale: "pt" // Define o calendário em português
         });
 
+        flatpickr("#modalData", {
+            dateFormat: "d/m/Y", // Formato: Dia/Mês/Ano
+            maxDate: "today", // Impede datas futuras
+            locale: "pt" // Define o calendário em português
+        });
+
         function exibirResumo() {
     let resumo = '';
     const tipos = [...new Set(estoque.map(item => item.tipo))]; // Tipos distintos de chopp
@@ -418,7 +668,7 @@ h3 {
 
         function atualizarTabelaHistorico() {
             let tbody = document.querySelector("#tabela-historico tbody");
-            tbody.innerHTML = ""; // Limpa a tabela antes de atualizar
+            tbody.innerHTML = ""; // Limpa a tabela antes de atualizar 
 
             historicoMovimentacao.forEach(mov => {
                 let row = `<tr>
@@ -441,6 +691,16 @@ h3 {
             });
         }
         
+function preencherCervejariasModal() {
+    const cervejariaSelect = document.getElementById("modalCervejaria");
+    cervejariaSelect.innerHTML = "<option value=''>Selecione</option>"; // Limpa as opções existentes
+    Object.keys(chopps).forEach(cervejaria => {
+        let option = document.createElement("option");
+        option.value = cervejaria;
+        option.textContent = cervejaria;
+        cervejariaSelect.appendChild(option);
+    });
+}
 
         function atualizarChopps() {
             const cervejaria = document.getElementById("cervejaria").value;
@@ -457,56 +717,43 @@ h3 {
         }
 
         function adicionarChopp() {
-            const cervejaria = document.getElementById("cervejaria").value;
-            const nome = document.getElementById("nome").value;
-            const quantidade = parseInt(document.getElementById("quantidade").value);
-            const data = document.getElementById("data").value;
-            const tipo = document.getElementById("tipo").value; // Novo campo
+    const cervejaria = document.getElementById("cervejaria").value;
+    const nome = document.getElementById("nome").value;
+    const quantidade = parseInt(document.getElementById("quantidade").value);
+    const data = document.getElementById("data").value;
+    const tipo = document.getElementById("tipo").value;
 
-            if (!cervejaria || !nome || !quantidade || !data) {
-                alert("Por favor, preencha todos os campos!");
-                return;
-            }
+    if (!cervejaria || !nome || !quantidade || !data) {
+        alert("Por favor, preencha todos os campos!");
+        return;
+    }
 
-        function limparFormulario() {
-            document.getElementById("cervejaria").value = "";
-            document.getElementById("nome").value = "";
-            document.getElementById("quantidade").value = "";
-            document.getElementById("data").value = "";
-            // Limpe outros campos do formulário, se houver
-        }
+    // Concatenar o nome da cervejaria com o nome do chopp
+    const nomeCompleto = `${cervejaria} - ${nome}`;
 
-        function focoNoPrimeiroCampo() {
-            document.getElementById("cervejaria").focus();
+    // Verificar se o chopp já existe no estoque
+    const itemExistente = estoque.find(item => item.nome === nomeCompleto);
+    if (itemExistente) {
+        itemExistente.quantidade += quantidade;
+    } else {
+        estoque.push({ nome: nomeCompleto, quantidade, data, tipo });
+    }
+
+    // Salvar no localStorage e atualizar a tabela
+    localStorage.setItem("estoque", JSON.stringify(estoque));
+    atualizarTabela();
+
+    // Limpar os campos após adicionar
+    limparCampos();
 }
-
-            // Verificar se o chopp já existe no estoque
-            const itemExistente = estoque.find(item => item.nome === nome);
-            
-            if (itemExistente) {
-            // Se o item já existir, incrementa a quantidade
-                itemExistente.quantidade += quantidade;
-            } else {
-                // Caso contrário, adiciona um novo item ao estoque
-                estoque.push({ nome, quantidade, data, tipo }); // Adiciona o tipo
-            }
-
-            // Salvar o estoque no localStorage
-                localStorage.setItem("estoque", JSON.stringify(estoque));
-
-            // Atualizar a tabela e o resumo
-                atualizarTabela();
-
-            // Limpar os campos após adicionar
-                limparCampos();
-        }
 
         function atualizarTabela() {
         const tabela = document.getElementById("estoque");
         tabela.innerHTML = "";
         
         estoque.forEach((item, index) => {
-            const row = `<tr>
+            const row = document.createElement("tr");
+        row.innerHTML = `
             <td>${item.nome}</td>
             <td>${item.quantidade}</td>
             <td>${item.data}</td>
@@ -521,8 +768,11 @@ h3 {
                     <i class="fas fa-edit"></i> Editar
                 </button>
             </td>
-            </tr>`;
-            tabela.innerHTML += row;
+            `;
+            tabela.appendChild(row);
+
+        // Adiciona a classe "show" com um pequeno atraso
+        setTimeout(() => row.classList.add("show"), 100);
         });
 
         // Chama a função para atualizar o resumo do estoque
@@ -785,7 +1035,128 @@ function atualizarChoppsEdicao() {
     }
 }
 
+function atualizarChoppsModal() {
+    const cervejaria = document.getElementById("modalCervejaria").value;
+    const nomeSelect = document.getElementById("modalNome");
+    nomeSelect.innerHTML = "<option value=''>Selecione</option>"; // Limpa as opções existentes
+    if (cervejaria && chopps[cervejaria]) {
+        chopps[cervejaria].forEach(chopp => {
+            let option = document.createElement("option");
+            option.value = chopp;
+            option.textContent = chopp;
+            nomeSelect.appendChild(option);
+        });
+    }
+}
 
-    </script>
+function adicionarChoppModal() {
+    const cervejaria = document.getElementById("modalCervejaria").value;
+    const nome = document.getElementById("modalNome").value;
+    const quantidade = parseInt(document.getElementById("modalQuantidade").value);
+    const data = document.getElementById("modalData").value;
+    const tipo = document.getElementById("modalTipo").value;
+
+    if (!cervejaria || !nome || !quantidade || !data) {
+        alert("Por favor, preencha todos os campos!");
+        return;
+    }
+
+    // Concatenar o nome da cervejaria com o nome do chopp
+    const nomeCompleto = `${cervejaria} - ${nome}`;
+
+    // Verificar se o chopp já existe no estoque
+    const itemExistente = estoque.find(item => item.nome === nomeCompleto);
+    if (itemExistente) {
+        itemExistente.quantidade += quantidade;
+    } else {
+        estoque.push({ nome: nomeCompleto, quantidade, data, tipo });
+    }
+
+    // Salvar no localStorage e atualizar a tabela
+    localStorage.setItem("estoque", JSON.stringify(estoque));
+    atualizarTabela();
+
+    // Fechar o modal e limpar os campos
+    fecharModalAdicionar();
+    limparCamposModal();
+}
+
+function limparCamposModal() {
+    document.getElementById("modalCervejaria").value = "";
+    document.getElementById("modalNome").innerHTML = "<option value=''>Selecione uma cervejaria primeiro</option>";
+    document.getElementById("modalQuantidade").value = "";
+    document.getElementById("modalData").value = "";
+    document.getElementById("modalTipo").value = "Pilsen";
+}
+
+function abrirModalAdicionar() {
+    preencherCervejariasModal(); // Preenche as cervejarias no modal
+    atualizarBotoesQuantidadeModal(); // Gera os botões de quantidade
+    document.getElementById("modalAdicionarChopp").style.display = "block";
+}
+
+function fecharModalAdicionar() {
+    document.getElementById("modalAdicionarChopp").style.display = "none";
+}
+
+function atualizarBotoesQuantidadeModal(quantidadeSelecionada) {
+    const quantidadeBotoesDiv = document.getElementById("modalQuantidade-botoes");
+    quantidadeBotoesDiv.innerHTML = ''; // Limpa os botões existentes
+
+    for (let i = 1; i <= 10; i++) {
+        const botao = document.createElement("button");
+        botao.textContent = i;
+        botao.type = "button";
+        botao.onclick = function () {
+            selecionarQuantidadeModal(i);
+        };
+        if (i === quantidadeSelecionada) {
+            botao.classList.add("selected");
+        }
+        quantidadeBotoesDiv.appendChild(botao);
+    }
+}
+
+function selecionarQuantidadeModal(valor) {
+    document.getElementById("modalQuantidade").value = valor;
+
+    // Remove a classe "selected" de todos os botões
+    document.querySelectorAll("#modalQuantidade-botoes button").forEach(btn => {
+        btn.classList.remove("selected");
+    });
+
+    // Adiciona a classe "selected" ao botão clicado
+    const botaoSelecionado = document.querySelector(`#modalQuantidade-botoes button:nth-child(${valor})`);
+    if (botaoSelecionado) {
+        botaoSelecionado.classList.add("selected");
+    }
+}
+
+function alternarModoEscuro() {
+    const body = document.body;
+    const isDarkMode = body.classList.toggle("dark-mode"); // Alterna a classe "dark-mode"
+
+    // Atualiza o ícone do botão
+    const toggleButtonIcon = document.querySelector("#toggleDarkMode i");
+    toggleButtonIcon.className = isDarkMode ? "fas fa-sun" : "fas fa-moon";
+
+    // Salva a preferência no localStorage
+    localStorage.setItem("modoEscuro", isDarkMode);
+}
+
+// Verifica a preferência salva no localStorage ao carregar a página
+window.onload = function () {
+    const isDarkMode = localStorage.getItem("modoEscuro") === "true"; // Recupera a preferência
+    if (isDarkMode) {
+        document.body.classList.add("dark-mode");
+const toggleButtonIcon = document.querySelector("#toggleDarkMode i");
+        toggleButtonIcon.className = "fas fa-sun"; // Define o ícone como "sol" no modo escuro
+    }
+};
+
+// Adiciona o evento de clique ao botão
+document.getElementById("toggleDarkMode").addEventListener("click", alternarModoEscuro);
+
+</script>
 </body>
 </html>
