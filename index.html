@@ -739,7 +739,7 @@ function preencherCervejariasModal() {
         itemExistente.quantidade += quantidade;
     } else {
         estoque.push({ nome: nomeCompleto, quantidade, data, tipo });
-        salvarEstoqueNoFirebase();
+        salvarEstoqueNoFirestore();
     }
 
     // Salvar no localStorage e atualizar a tabela
@@ -786,7 +786,7 @@ function preencherCervejariasModal() {
             if (confirm("Tem certeza que deseja remover este item?")) {
                 estoque.splice(index, 1);
                 localStorage.setItem("estoque", JSON.stringify(estoque));
-                salvarEstoqueNoFirebase(); // Atualiza o Firebase
+                salvarEstoqueNoFirestore(); // Atualiza o Firebasestore
                 atualizarTabela();
             }
         }
@@ -1009,8 +1009,8 @@ function salvarEdicaoChopp() {
     console.log("Estoque atualizado após edição:", estoque);
 
 
-    // Atualiza o Firebase
-    salvarEstoqueNoFirebase();     
+    // Atualiza o FirebaseStore
+    salvarEstoqueNoFirestore();     
 
     // Atualiza a tabela de exibição
     atualizarTabela();
@@ -1025,10 +1025,10 @@ function salvarEdicaoChopp() {
 }
 
     // Salva as alterações no localStorage
-    function salvarEstoqueNoFirebase() {
-        firebase.database().ref('estoque').set(estoque)
-            .then(() => console.log('Estoque salvo no Firebase!'))
-            .catch(error => console.error('Erro ao salvar estoque:', error));
+    function salvarEstoqueNoFirestore() {
+        db.collection("estoque").doc("dados").set({ estoque })
+            .then(() => console.log("Estoque salvo no Firestore!"))
+            .catch(error => console.error("Erro ao salvar estoque:", error));
     }
 
 
@@ -1084,17 +1084,21 @@ function adicionarChoppModal() {
         estoque.push({ nome: nomeCompleto, quantidade, data, tipo });
     }
 
-     function carregarEstoqueDoFirebase() {
-        firebase.database().ref('estoque').once('value')
-            .then(snapshot => {
-                estoque = snapshot.val() || [];
-                atualizarTabela();
-                exibirResumo();
+    function carregarEstoqueDoFirestore() {
+        db.collection("estoque").doc("dados").get()
+            .then(doc => {
+                if (doc.exists) {
+                    estoque = doc.data().estoque || [];
+                    atualizarTabela();
+                    exibirResumo();
+                } else {
+                    console.log("Nenhum dado encontrado no Firestore.");
+                }
             })
-            .catch(error => console.error('Erro ao carregar estoque:', error));
+            .catch(error => console.error("Erro ao carregar estoque:", error));
     }
 
-    salvarEstoqueNoFirebase(); // Salva no Firebase
+    salvarEstoqueNoFirestore(); // Salva no Firebasestore
 
     // Fechar o modal e limpar os campos
     fecharModalAdicionar();
@@ -1166,7 +1170,7 @@ function alternarModoEscuro() {
 
 // Verifica a preferência salva no localStorage ao carregar a página
 window.onload = function () {
-    carregarEstoqueDoFirebase(); // Carrega o estoque do Firebase
+    carregarEstoqueDoFirestore(); // Carrega o estoque do FirebaseStore
     const isDarkMode = localStorage.getItem("modoEscuro") === "true"; // Recupera a preferência
     if (isDarkMode) {  
         document.body.classList.add("dark-mode");
@@ -1194,6 +1198,9 @@ document.getElementById("toggleDarkMode").addEventListener("click", alternarModo
   // Inicializa o Firebase
   const app = firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
+
+  // Inicializa o Firestore
+  const db = firebase.firestore();
 </script>
 </body>
 </html>
