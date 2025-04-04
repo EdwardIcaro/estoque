@@ -1008,12 +1008,6 @@ function salvarEdicaoChopp() {
 
     console.log("Estoque atualizado após edição:", estoque);
 
-    // Salva as alterações no localStorage
-        function salvarEstoqueNoFirebase() {
-        firebase.database().ref('estoque').set(estoque)
-            .then(() => console.log('Estoque salvo no Firebase!'))
-            .catch(error => console.error('Erro ao salvar estoque:', error));
-    }
 
     // Atualiza o Firebase
     salvarEstoqueNoFirebase();     
@@ -1029,6 +1023,13 @@ function salvarEdicaoChopp() {
 
     alert("Chopp editado com sucesso!");
 }
+
+    // Salva as alterações no localStorage
+    function salvarEstoqueNoFirebase() {
+        firebase.database().ref('estoque').set(estoque)
+            .then(() => console.log('Estoque salvo no Firebase!'))
+            .catch(error => console.error('Erro ao salvar estoque:', error));
+    }
 
 
 
@@ -1092,6 +1093,8 @@ function adicionarChoppModal() {
             })
             .catch(error => console.error('Erro ao carregar estoque:', error));
     }
+
+    salvarEstoqueNoFirebase(); // Salva no Firebase
 
     // Fechar o modal e limpar os campos
     fecharModalAdicionar();
@@ -1181,9 +1184,9 @@ document.getElementById("toggleDarkMode").addEventListener("click", alternarModo
   const firebaseConfig = {
     apiKey: "AIzaSyAqRv4v02w3TUMVg3xHqWOryr1i4rOTMX0",
     authDomain: "legiaoestoque.firebaseapp.com",
-    databaseURL: "https://console.firebase.google.com/u/0/project/legiaoestoque/firestore/databases/-default-/database",
+    databaseURL: "https://legiaoestoque-default-rtdb.firebaseio.com", // Corrigido
     projectId: "legiaoestoque",
-    storageBucket: "legiaoestoque.firebasestorage.app",
+    storageBucket: "legiaoestoque.appspot.com",
     messagingSenderId: "353311907028",
     appId: "1:353311907028:web:e50676ac5b065968b5ef41"
   };
