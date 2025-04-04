@@ -755,36 +755,29 @@ function preencherCervejariasModal() {
         }
 
         function adicionarChopp() {
-    const cervejaria = document.getElementById("cervejaria").value;
-    const nome = document.getElementById("nome").value;
-    const quantidade = parseInt(document.getElementById("quantidade").value);
-    const data = document.getElementById("data").value;
-    const tipo = document.getElementById("tipo").value;
+            const cervejaria = document.getElementById("cervejaria").value;
+            const nome = document.getElementById("nome").value;
+            const quantidade = parseInt(document.getElementById("quantidade").value);
+            const data = document.getElementById("data").value;
+            const tipo = document.getElementById("tipo").value;
 
-    if (!cervejaria || !nome || !quantidade || !data) {
-        alert("Por favor, preencha todos os campos!");
-        return;
+        if (!cervejaria || !nome || !quantidade || !data) {
+            alert("Por favor, preencha todos os campos!");
+            return;
+        }
+
+        const nomeCompleto = `${cervejaria} - ${nome}`;
+        const itemExistente = estoque.find(item => item.nome === nomeCompleto);
+
+        if (itemExistente) {
+            itemExistente.quantidade += quantidade;
+        } else {
+            estoque.push({ nome: nomeCompleto, quantidade, data, tipo });
+        }
+
+        salvarEstoqueNoFirestore(); // Salva no Firestore e atualiza a interface
+        limparCampos(); // Limpa os campos do formulário
     }
-
-    // Concatenar o nome da cervejaria com o nome do chopp
-    const nomeCompleto = `${cervejaria} - ${nome}`;
-
-    // Verificar se o chopp já existe no estoque
-    const itemExistente = estoque.find(item => item.nome === nomeCompleto);
-    if (itemExistente) {
-        itemExistente.quantidade += quantidade;
-    } else {
-        estoque.push({ nome: nomeCompleto, quantidade, data, tipo });
-        salvarEstoqueNoFirestore();
-    }
-
-    // Salvar no localStorage e atualizar a tabela
-    localStorage.setItem("estoque", JSON.stringify(estoque));
-    atualizarTabela();
-
-    // Limpar os campos após adicionar
-    limparCampos();
-}
 
         function atualizarTabela() {
         const tabela = document.getElementById("estoque");
@@ -823,7 +816,6 @@ function preencherCervejariasModal() {
                 estoque.splice(index, 1);
                 localStorage.setItem("estoque", JSON.stringify(estoque));
                 salvarEstoqueNoFirestore(); // Atualiza o Firebasestore
-                atualizarTabela();
             }
         }
 
@@ -1048,12 +1040,6 @@ function salvarEdicaoChopp() {
     // Atualiza o FirebaseStore
     salvarEstoqueNoFirestore();     
 
-    // Atualiza a tabela de exibição
-    atualizarTabela();
-
-    // Atualiza o resumo do estoque
-    exibirResumo();
-
     // Esconde o modal
     fecharModal();
 
@@ -1062,10 +1048,13 @@ function salvarEdicaoChopp() {
 
     function salvarEstoqueNoFirestore() {
         db.collection("estoque").doc("dados").set({ estoque })
-            .then(() => console.log("Estoque salvo no Firestore!"))
+            .then(() => {
+                console.log("Estoque salvo no Firestore!");
+                atualizarTabela(); // Atualiza a tabela
+                exibirResumo();    // Atualiza o resumo
+            })
             .catch(error => console.error("Erro ao salvar estoque:", error));
     }
-
 
 
 function atualizarChoppsEdicao() {
