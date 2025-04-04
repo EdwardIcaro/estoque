@@ -9,8 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estoque de Chopps</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -412,6 +412,42 @@ table tbody tr.show {
 }
 </style>
 </head>
+
+<script>
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAqRv4v02w3TUMVg3xHqWOryr1i4rOTMX0",
+      authDomain: "legiaoestoque.firebaseapp.com",
+      databaseURL: "https://legiaoestoque-default-rtdb.firebaseio.com", // Corrigido
+      projectId: "legiaoestoque",
+      storageBucket: "legiaoestoque.appspot.com",
+      messagingSenderId: "353311907028",
+      appId: "1:353311907028:web:e50676ac5b065968b5ef41"
+    };
+  
+    // Inicializa o Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+  
+    // Inicializa o Firestore
+    const db = firebase.firestore();
+
+  // Funções do Firestore
+  function carregarEstoqueDoFirestore() {
+      db.collection("estoque").doc("dados").get()
+          .then(doc => {
+              if (doc.exists) {
+                  estoque = doc.data().estoque || [];
+                  atualizarTabela();
+                  exibirResumo();
+              } else {
+                  console.log("Nenhum dado encontrado no Firestore.");
+              }
+          })
+          .catch(error => console.error("Erro ao carregar estoque:", error));
+  }
+
+</script>
+
 <body>
     <div class="container">
         <h2>Adicionar Chopp</h2>
@@ -1083,20 +1119,6 @@ function adicionarChoppModal() {
         estoque.push({ nome: nomeCompleto, quantidade, data, tipo });
     }
 
-    function carregarEstoqueDoFirestore() {
-        db.collection("estoque").doc("dados").get()
-            .then(doc => {
-                if (doc.exists) {
-                    estoque = doc.data().estoque || [];
-                    atualizarTabela();
-                    exibirResumo();
-                } else {
-                    console.log("Nenhum dado encontrado no Firestore.");
-                }
-            })
-            .catch(error => console.error("Erro ao carregar estoque:", error));
-    }
-
     salvarEstoqueNoFirestore(); // Salva no Firebasestore
 
     // Fechar o modal e limpar os campos
@@ -1182,26 +1204,5 @@ window.onload = function () {
 document.getElementById("toggleDarkMode").addEventListener("click", alternarModoEscuro);
 
 </script>
-
-<script>
-  // Configuração do Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyAqRv4v02w3TUMVg3xHqWOryr1i4rOTMX0",
-    authDomain: "legiaoestoque.firebaseapp.com",
-    databaseURL: "https://legiaoestoque-default-rtdb.firebaseio.com", // Corrigido
-    projectId: "legiaoestoque",
-    storageBucket: "legiaoestoque.appspot.com",
-    messagingSenderId: "353311907028",
-    appId: "1:353311907028:web:e50676ac5b065968b5ef41"
-  };
-
-  // Inicializa o Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-
-  // Inicializa o Firestore
-  const db = firebase.firestore();
-
-</script>
-
 </body>
 </html>
