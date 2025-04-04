@@ -1024,7 +1024,6 @@ function salvarEdicaoChopp() {
     alert("Chopp editado com sucesso!");
 }
 
-    // Salva as alterações no localStorage
     function salvarEstoqueNoFirestore() {
         db.collection("estoque").doc("dados").set({ estoque })
             .then(() => console.log("Estoque salvo no Firestore!"))
@@ -1168,7 +1167,7 @@ function alternarModoEscuro() {
     localStorage.setItem("modoEscuro", isDarkMode);
 }
 
-// Verifica a preferência salva no localStorage ao carregar a página
+// Verifica a preferência salva ao carregar a página
 window.onload = function () {
     carregarEstoqueDoFirestore(); // Carrega o estoque do FirebaseStore
     const isDarkMode = localStorage.getItem("modoEscuro") === "true"; // Recupera a preferência
@@ -1183,6 +1182,7 @@ window.onload = function () {
 document.getElementById("toggleDarkMode").addEventListener("click", alternarModoEscuro);
 
 </script>
+
 <script>
   // Configuração do Firebase
   const firebaseConfig = {
@@ -1197,10 +1197,11 @@ document.getElementById("toggleDarkMode").addEventListener("click", alternarModo
 
   // Inicializa o Firebase
   const app = firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
 
   // Inicializa o Firestore
   const db = firebase.firestore();
+
 </script>
+
 </body>
 </html>
